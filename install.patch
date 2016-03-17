@@ -1,0 +1,46 @@
+diff --git a/memsmodel/Makefile b/memsmodel/Makefile
+index 639b0e1..20eadf9 100644
+--- a/memsmodel/Makefile
++++ b/memsmodel/Makefile
+@@ -29,7 +29,7 @@
+ 
+ include .paths
+ 
+-LDFLAGS = -lm -L.
++LDFLAGS = -L. -lm
+ 
+ DEBUG_OFLAGS = -g -DASSERTS # -DDEBUG=1
+ PROF_OFLAGS = -g -DASSERTS -p
+@@ -78,7 +78,7 @@ $(MEMS_OBJ): %.o: %.c
+ 	$(CC) -c $(CFLAGS) $< -o $@
+ 
+ mems_seektest: mems_seektest.o libmems_internals.a
+-	$(CC) -o $@ mems_seektest.o $(LDFLAGS) $(CFLAGS) -lmems_internals
++	$(CC) -o $@ mems_seektest.o $(CFLAGS) -lmems_internals $(LDFLAGS)
+ 
+ libmems_internals.a: mems_internals.o mems_piecewise_seek.o mems_hong_seek.o
+ 	ar cru $@ mems_internals.o mems_piecewise_seek.o mems_hong_seek.o
+diff --git a/src/Makefile b/src/Makefile
+index ee2ddb6..2c018ad 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -32,8 +32,8 @@ FLEX = flex
+ 
+ include .paths
+ 
+-LDFLAGS = -lm -L. -ldisksim $(DISKMODEL_LDFLAGS) $(MEMSMODEL_LDFLAGS) \
+-                            $(LIBPARAM_LDFLAGS) $(LIBDDBG_LDFLAGS) 
++LDFLAGS = -L. -ldisksim $(DISKMODEL_LDFLAGS) $(MEMSMODEL_LDFLAGS) \
++                            $(LIBPARAM_LDFLAGS) $(LIBDDBG_LDFLAGS) -lm 
+ 
+ HP_FAST_OFLAGS = +O4
+ NCR_FAST_OFLAGS = -O4 -Hoff=BEHAVED 
+@@ -113,7 +113,7 @@ fbdisksim :
+ 	$(MAKE) FREEBLOCKS_OFLAGS=-DFREEBLOCKS all
+ 
+ rms : rms.c
+-	$(CC) $< -lm -o $@
++	$(CC) $< -o $@ -lm
+ 
+ hplcomb : hplcomb.c
+ 	$(CC) $< -o $@
